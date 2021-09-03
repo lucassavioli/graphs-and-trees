@@ -16,7 +16,6 @@ const tree1 = new Tree(1);
 tree1.insertChild(3);
 const tree2 = tree1.insertChild(5);
 tree2.insertChild(7)
-console.log(jsonTree);
 
 
 var root = tree1;
