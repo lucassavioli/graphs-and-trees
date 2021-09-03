@@ -1,3 +1,19 @@
 {
-
+  "name": "graphs-and-trees",
+  "version": "1.0.0",
+  "description": "Implementations of graphs and trees with Javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucassavioli/graphs-and-trees.git"
+  },
+  "author": "Lucas Savioli Martins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucassavioli/graphs-and-trees/issues"
+  },
+  "homepage": "https://github.com/lucassavioli/graphs-and-trees#readme"
 }

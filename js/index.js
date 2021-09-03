@@ -1,3 +1,5 @@
+import { Tree } from './tree.js';
+
 var margin = {
     top: 20,
     right: 120,
@@ -7,19 +9,17 @@ var margin = {
 width = 960 - margin.right - margin.left,
 height = 800 - margin.top - margin.bottom;
 
-var root = {
-    "value": "1",
-    "children": [
-      { 
-        "value": "2",
-        "children": [
-          { "value": "2.1" },
-          { "value": "2.2" }
-        ]
-      },
-      { "value": "3" }
-    ]
-  };
+
+// Creating an instancce of a Tree
+const tree1 = new Tree(1);
+
+tree1.insertChild(3);
+const tree2 = tree1.insertChild(5);
+tree2.insertChild(7)
+console.log(jsonTree);
+
+
+var root = tree1;
 
 var i = 0,
     duration = 750,
@@ -32,8 +32,9 @@ var diagonal = d3.svg.diagonal()
     return [d.x + rectW / 2, d.y + rectH / 2];
 });
 
+var zm = d3.behavior.zoom().scaleExtent([1,3]);
 var svg = d3.select("#body").append("svg").attr("width", 1000).attr("height", 1000)
-    .call(zm = d3.behavior.zoom().scaleExtent([1,3]).on("zoom", redraw)).append("g")
+    .call(zm.on("zoom", redraw)).append("g")
     .attr("transform", "translate(" + 350 + "," + 20 + ")");
 
 //necessary so that zoom knows where to zoom and unzoom from
