@@ -1,66 +1,86 @@
-import { Tree } from './tree.js';
+//import { Tree } from './tree.js';
 
-var margin = {
-    top: 20,
-    right: 120,
-    bottom: 20,
-    left: 120
-},
-width = 960 - margin.right - margin.left,
-height = 800 - margin.top - margin.bottom;
-
-
-// Creating an instancce of a Tree
-const tree1 = new Tree(1);
-
-tree1.insertChild(3);
-const tree2 = tree1.insertChild(5);
-tree2.insertChild(7)
-
-
-var root = tree1;
-
-var i = 0,
-    duration = 750,
-    rectW = 60,
-    rectH = 30;
-
-var tree = d3.layout.tree().nodeSize([70, 40]);
-var diagonal = d3.svg.diagonal()
-    .projection(function (d) {
-    return [d.x + rectW / 2, d.y + rectH / 2];
-});
-
-var zm = d3.behavior.zoom().scaleExtent([1,3]);
-var svg = d3.select("#body").append("svg").attr("width", 1000).attr("height", 1000)
-    .call(zm.on("zoom", redraw)).append("g")
-    .attr("transform", "translate(" + 350 + "," + 20 + ")");
-
-//necessary so that zoom knows where to zoom and unzoom from
-zm.translate([350, 20]);
-
-root.x0 = 0;
-root.y0 = height / 2;
-
-function collapse(d) {
-    if (d.children) {
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null;
+class Tree {
+    
+    constructor(value) {
+      this.value = value;
+      this.children = []
+      
+      if (this.value == null) {
+        console.log("The tree doesn't have a value on root node!");
+      }
     }
+        
+    insertChild(value) {
+      const newTree = new Tree(value);
+      this.children.push(newTree);
+      return newTree;
+    }
+    
+    removeChild() {
+      // Todo
+    }
+    
+    traverse() {
+      // todo
+    }
+    
 }
 
-root.children.forEach(collapse);
-update(root);
+function addRoot() {
 
-d3.select("#body").style("height", "800px");
+    let inputRoot = document.getElementById("inputRoot").value;
+    root = new Tree(inputRoot);
+    update(root);
+    document.getElementById('nodeAlert').hidden = true;
+    console.log("Raiz adicionada:" + inputRoot);
 
+}
+
+function addValue() {
+    
+    let inputVal = document.getElementById("inputValue").value;
+    var newNodeObj = new Tree(inputVal);
+    var newNode = tree.nodes(newNodeObj);
+    newNode.depth = selected.depth + 1;
+    newNode.parent = selected;
+
+    if(!selected.children) {
+        selected.children = [];
+    }
+    
+    selected.children.push(newNode[0]);         
+    update(selected);
+    console.log("Novo nó adicionado: " + inputVal);
+}
+
+function removeValue() {
+    
+    let updateChildren = [];
+
+    if (selected.parent) {
+        selected.parent.children.forEach(target => {
+
+            if (target.id != selected.id) {
+
+                updateChildren.push(target);    
+
+            }
+
+            selected.parent.children = updateChildren;
+        });
+        update(selected);
+        console.log("Nó removido: " + selected.value);
+    } 
+}
+  
+// function to update the tree
 function update(source) {
-
+            
     // Compute the new tree layout.
     var nodes = tree.nodes(root).reverse(),
         links = tree.links(nodes);
-
+    
     // Normalize for fixed-depth.
     nodes.forEach(function (d) {
         d.y = d.depth * 180;
@@ -71,15 +91,15 @@ function update(source) {
         .data(nodes, function (d) {
         return d.id || (d.id = ++i);
     });
-
+    
     // Enter any new nodes at the parent's previous position.
+    // add class node to element g and it's coordinates
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
         .attr("transform", function (d) {
         return "translate(" + source.x0 + "," + source.y0 + ")";
     })
         .on("click", click);
-
     nodeEnter.append("rect")
         .attr("width", rectW)
         .attr("height", rectH)
@@ -88,7 +108,7 @@ function update(source) {
         .style("fill", function (d) {
         return d._children ? "lightsteelblue" : "#fff";
     });
-
+    
     nodeEnter.append("text")
         .attr("x", rectW / 2)
         .attr("y", rectH / 2)
@@ -124,7 +144,7 @@ function update(source) {
         return "translate(" + source.x + "," + source.y + ")";
     })
         .remove();
-
+    
     nodeExit.select("rect")
         .attr("width", rectW)
         .attr("height", rectH)
@@ -184,17 +204,15 @@ function update(source) {
     });
 }
 
-// Toggle children on click.
+// Return the selected node
 function click(d) {
-    if (d.children) {
-        d._children = d.children;
-        d.children = null;
-    } else {
-        d.children = d._children;
-        d._children = null;
-    }
-    update(d);
+    selected = d;
+    document.getElementById('btn-add').disabled = false;
+    document.getElementById('btn-del').disabled = false;
+    console.log("Nó selecionado:" + d.value);
+    update(d); 
 }
+
 
 //Redraw for zoom
 function redraw() {
@@ -203,3 +221,56 @@ function redraw() {
       "translate(" + d3.event.translate + ")"
       + " scale(" + d3.event.scale + ")");
 }
+
+
+
+var margin = {
+    top: 20,
+    right: 120,
+    bottom: 20,
+    left: 120
+},
+width = 960 - margin.right - margin.left,
+height = 800 - margin.top - margin.bottom;
+
+// holds the selected node
+var selected = null;
+
+// root of the three
+var root = null;
+
+var i = 0,
+    duration = 750,
+    rectW = 60,
+    rectH = 30;
+
+// create a tree layout with width and height nodes sizes
+// get an svg file
+var tree = d3.layout.tree().nodeSize([70, 40]);
+var diagonal = d3.svg.diagonal()
+    .projection(function (d) {
+    return [d.x + rectW / 2, d.y + rectH / 2];
+});
+
+// creates a zoom with a scale range
+// set #body id in which the tree will be displayed
+var zm = d3.behavior.zoom().scaleExtent([1,3]);
+var svg = d3.select("#body").append("svg").attr("width", 1000).attr("height", 1000)
+    .call(zm.on("zoom", redraw)).append("g")
+    .attr("transform", "translate(" + 350 + "," + 20 + ")");
+
+//necessary so that zoom knows where to zoom and unzoom from
+zm.translate([350, 20]);
+
+if(root) {
+
+    root.x0 = 0;
+    root.y0 = height / 2;
+    // update tree from the source
+    update(root);    
+
+} else {
+    document.getElementById('nodeAlert').hidden = false;
+}
+
+d3.select("#body").style("height", "800px");
