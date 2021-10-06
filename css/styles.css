@@ -1,3 +1,7 @@
 .input-group {
-    width: 20%;
+    width: 50%;
+}
+
+#nodeAlert {
+    color: red;
 }

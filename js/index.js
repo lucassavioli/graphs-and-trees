@@ -1,4 +1,3 @@
-//import { Tree } from './tree.js';
 
 class Tree {
     
@@ -27,31 +26,76 @@ class Tree {
     
 }
 
-function addRoot() {
 
-    let inputRoot = document.getElementById("inputRoot").value;
-    root = new Tree(inputRoot);
-    update(root);
-    document.getElementById('nodeAlert').hidden = true;
-    console.log("Raiz adicionada:" + inputRoot);
+function visitElement(animX) {
+    
+     d3.select("rect")
+       .transition().duration(animDuration).delay(animDuration*animX)
+       .style("fill","blue").style("stroke","blue");
+}
+
+function percursoDFT() {
+    
+    console.log("[+] Percurso Depth-first iniciado!");
+    var stack = [];
+    var animX = 0;
+    stack.push(root);
+
+    while(stack.length != 0) {
+        var element = stack.pop();
+        visitElement(animX);
+        animX=animX+1;
+        console.log(element);
+
+        if(element.children != undefined) {
+
+            for(var i=0; i<element.children.length; i++){
+
+                stack.push(element.children[element.children.length-i-1]);
+                
+            }
+        }
+    }
+}
+
+
+function addRoot() {
+    
+    var inputRoot = document.getElementById("inputRoot").value;
+    if(inputRoot) {
+        root = new Tree(inputRoot);
+        root.x0 = 0;
+        root.y0 = height / 2;        
+        update(root);
+        document.getElementById('nodeAlert').hidden = true;
+        console.log("[+] Nó raiz adicionado:" + inputRoot);
+    } else {
+        console.log("[!] Insira um valor para o nó raiz!");
+    }
 
 }
 
 function addValue() {
     
-    let inputVal = document.getElementById("inputValue").value;
-    var newNodeObj = new Tree(inputVal);
-    var newNode = tree.nodes(newNodeObj);
-    newNode.depth = selected.depth + 1;
-    newNode.parent = selected;
+    if(selected) {
 
-    if(!selected.children) {
-        selected.children = [];
+        var inputVal = document.getElementById("inputValue").value;
+        var newNodeObj = new Tree(inputVal);
+        var newNode = tree.nodes(newNodeObj);
+        newNode.depth = selected.depth + 1;
+        newNode.parent = selected;
+
+        if(!selected.children) {
+            selected.children = [];
+        }
+        
+        selected.children.push(newNode[0]);         
+        update(selected);        
+        console.log("[+] Nó filho adicionado: " + inputVal);
+
+    } else {
+        console.log("[!] É preciso adicionar selecionar um nó!");
     }
-    
-    selected.children.push(newNode[0]);         
-    update(selected);
-    console.log("Novo nó adicionado: " + inputVal);
 }
 
 function removeValue() {
@@ -70,23 +114,38 @@ function removeValue() {
             selected.parent.children = updateChildren;
         });
         update(selected);
-        console.log("Nó removido: " + selected.value);
+        console.log("[-] Nó removido: " + selected.value);
     } 
 }
+
+function selectExample() {
+    document.getElementById('nodeAlert').hidden = true;
+    let selected = document.getElementById("select-example");
+    console.log("[+] Exemplo selecionado: " + selected.options[selected.value].text);    
+    root = examples[selected.value];
+    root.x0 = 0;
+    root.y0 = height / 2;
+    update(root);
+}
+
+function resetTree() {
+    window.location.href = window.location.href;
+    console.log("[-] Reset");
+}
   
-// function to update the tree
+// funcao para atualizar a arvore
 function update(source) {
-            
+    
     // Compute the new tree layout.
     var nodes = tree.nodes(root).reverse(),
         links = tree.links(nodes);
     
-    // Normalize for fixed-depth.
+    // normaliza para um profundidade fixa
     nodes.forEach(function (d) {
         d.y = d.depth * 180;
     });
 
-    // Update the nodes…
+    // Atualiza os nos
     var node = svg.selectAll("g.node")
         .data(nodes, function (d) {
         return d.id || (d.id = ++i);
@@ -118,7 +177,7 @@ function update(source) {
         return d.value;
     });
 
-    // Transition nodes to their new position.
+    // faz a transicao dos nos par sua nova posicao
     var nodeUpdate = node.transition()
         .duration(duration)
         .attr("transform", function (d) {
@@ -148,20 +207,18 @@ function update(source) {
     nodeExit.select("rect")
         .attr("width", rectW)
         .attr("height", rectH)
-    //.attr("width", bbox.getBBox().width)""
-    //.attr("height", bbox.getBBox().height)
-    .attr("stroke", "black")
+        .attr("stroke", "black")
         .attr("stroke-width", 1);
 
     nodeExit.select("text");
 
-    // Update the links…
+    // atualiza os links
     var link = svg.selectAll("path.link")
         .data(links, function (d) {
         return d.target.id;
     });
 
-    // Enter any new links at the parent's previous position.
+    // entra qualquer novo link na antiga posicao do no pai
     link.enter().insert("path", "g")
         .attr("class", "link")
         .attr("x", rectW / 2)
@@ -177,7 +234,7 @@ function update(source) {
         });
     });
 
-    // Transition links to their new position.
+    // transicao dos links para uma nova posicao
     link.transition()
         .duration(duration)
         .attr("d", diagonal);
@@ -204,7 +261,7 @@ function update(source) {
     });
 }
 
-// Return the selected node
+// retorna o no selecionado
 function click(d) {
     selected = d;
     document.getElementById('btn-add').disabled = false;
@@ -214,9 +271,9 @@ function click(d) {
 }
 
 
-//Redraw for zoom
+// re-renderiza quando o zoom mudar
 function redraw() {
-  //console.log("here", d3.event.translate, d3.event.scale);
+  
   svg.attr("transform",
       "translate(" + d3.event.translate + ")"
       + " scale(" + d3.event.scale + ")");
@@ -233,10 +290,13 @@ var margin = {
 width = 960 - margin.right - margin.left,
 height = 800 - margin.top - margin.bottom;
 
-// holds the selected node
+
+var animDuration = 500;
+
+// guarda o no selecionado
 var selected = null;
 
-// root of the three
+// raiz da arvore
 var root = null;
 
 var i = 0,
@@ -244,7 +304,7 @@ var i = 0,
     rectW = 60,
     rectH = 30;
 
-// create a tree layout with width and height nodes sizes
+// cria o layout da arvore e define o tamanho dos nos
 // get an svg file
 var tree = d3.layout.tree().nodeSize([70, 40]);
 var diagonal = d3.svg.diagonal()
@@ -264,10 +324,7 @@ zm.translate([350, 20]);
 
 if(root) {
 
-    root.x0 = 0;
-    root.y0 = height / 2;
-    // update tree from the source
-    update(root);    
+    //update(root);    
 
 } else {
     document.getElementById('nodeAlert').hidden = false;

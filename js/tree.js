@@ -15,12 +15,4 @@ export class Tree {
     return newTree;
   }
   
-  removeChild() {
-    // Todo
-  }
-  
-  traverse() {
-    // todo
-  }
-  
 }
