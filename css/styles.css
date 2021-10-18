@@ -1,7 +1,13 @@
 .input-group {
-    width: 50%;
+    width: 70%;
 }
 
 #nodeAlert {
     color: red;
+}
+
+#alertNotifications {
+    position: fixed;
+    margin-left: 90px;
+    margin-top: -880px;
 }

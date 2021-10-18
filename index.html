@@ -11,7 +11,7 @@
     <title>Árvore Interativa</title>
 </head>
 <body>
-    <div class="container">
+    <div id="board" class="container">
         <div class="row">
             <div class="col">
                 <h1 class="text-center">Árvore Interativa</h1>
@@ -21,24 +21,24 @@
             <div class="col"></div>
             <div class="col">
                 <div id="body">
-                    <h2 id="nodeAlert" hidden class="text-center">Insira um nó raiz</h2>
+                    <h2 id="nodeAlert" hidden class="text-center">Insira um nó raiz ou escolha uma árvore salva</h2>
                 </div>                
             </div>
             <div class="col"></div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h3 class="text-center">Operações</h3>
                 <div class="input-group mx-auto">
-                    <input type="text" id="inputValue" class="form-control" placeholder="Adicionar Nó" aria-describedby="button-addon2">
+                    <input type="text" id="inputValue" class="form-control" placeholder="Adicionar nó" aria-describedby="button-addon2">
                     <button class="btn btn-outline-secondary" type="button" onclick="addValue()" id="btn-add"><i class="bi bi-plus"></i></button>
                 </div>
                 <div class="input-group mx-auto">
-                    <input type="text" id="inputRoot" class="form-control" placeholder="Adicionar Nó Raiz" aria-describedby="button-addon2">
+                    <input type="text" id="inputRoot" class="form-control" placeholder="Adicionar nó raiz" aria-describedby="button-addon2">
                     <button class="btn btn-outline-secondary" type="button" onclick="addRoot()" id="btn-add"><i class="bi bi-plus"></i></button>
                 </div>                
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h3 class="text-center">Remover Nó</h3>
                 <div class="input-group mx-auto">                        
                     <button class="btn btn-outline-secondary" type="button" onclick="removeValue()" id="btn-del">Remover</button>
@@ -46,21 +46,26 @@
                     <button class="btn btn-outline-secondary" type="button" onclick="percursoDFT()" id="btn-reset">Percorrer</button>
                 </div>
             </div>
-            <div class="col-md-4">
-                <h3 class="text-center">Exemplos</h3>
+            <div class="col-md-3">
+                <h3 class="text-center">Carregar Árvore</h3>
                 <div class="text-center">
                     <select id="select-example" onchange="selectExample()" class="custom-select">
-                        <option selected>Escolha um exemplo</option>
-                        <option value="0">Árvore Binária Completa</option>
-                        <option value="1">Expressão Aritmética</option>
-                        <option value="2">Árvore de Huffmann</option>
+                        <option selected disabled>Escolha um exemplo...</option>                        
                     </select>
                 </div>
             </div>
+            <div class="col-md-3">
+                <h3 class="text-center">Exemplos de Árvore</h3>
+                <div class="input-group mx-auto">
+                    <input type="text" id="inputTreeName" class="form-control" placeholder="Insira um nome" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" onclick="saveTree()" id="btn-save"><i class="bi bi-save2"></i></button>                              
+                </div>                
+            </div>
         </div>
-    
+                
     </div>
     
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://d3js.org/d3.v3.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     <!-- <script src="js/tree.js" type="module"></script> -->
