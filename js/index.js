@@ -48,8 +48,7 @@ function printCode(root, s) {
 
     // se left e right são iguais a null será uma folha, 
     // entao printamos o codigo s gerado atravessando a árvore
-    if (root.left == null && root.right == null
-        && (root.c).toLowerCase() != (root.c).toUpperCase()) {
+    if (root.left == null && root.right == null) {
 
         // c: caracter
         // s: código de huffmann
