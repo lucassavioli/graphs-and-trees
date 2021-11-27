@@ -26,9 +26,144 @@ class Tree {
     
 }
 
+// huffman start
+
+// classe que define a estrutura do nó que compõe a árvore de huffmann
+class HuffmanNode
+{
+	constructor()
+	{
+		this.data = 0;
+		this.c = '';
+		this.left = this.right = null;
+	}
+}
+
+// função recursiva para printar os códigos de huffmann atravessando a árvore
+// root: raiz
+// s: codigo de huffman
+function printCode(root, s) {
+
+    // caso base
+
+    // se left e right são iguais a null será uma folha, 
+    // entao printamos o codigo s gerado atravessando a árvore
+    if (root.left == null && root.right == null
+        && (root.c).toLowerCase() != (root.c).toUpperCase()) {
+
+        // c: caracter
+        // s: código de huffmann
+        let table = document.getElementById("tableHuffmanCodes");
+        table.innerHTML += '<tr id="huffmanRows"><td>'+root.c+'</td><td>'+s+'</td></tr>'
+        //document.write(root.c + ":" + s+"<br>");
+        return;
+    }
+
+    // se formos para a esquerda, adicionamos o "0" ao código.
+    // se formos para a esquerda, adicionamos o "1" ao código.
+
+    // chamada recursiva para esquerda e
+    // sub-arvore direita da árvore gerada
+    printCode(root.left, s + "0");
+    printCode(root.right, s + "1");
+}
+
+function huffmanTree() {
+
+    // recebe os valores dos campos de entrada
+    inputChar = document.getElementById("inputCharList").value;
+    inputfreq = document.getElementById("inputFreqList").value;
+    
+    
+
+    // remove os espaços em branco e as vírgulas da string de caracteres
+    let charArray = inputChar.split(" ").join("").split(',');
+    
+    // remove os espaços em branco e as vírgulas da string de números e transforma para inteiros
+    let charfreq = inputfreq.split(" ").join("").split(',').map(function(item) {
+        return parseInt(item, 10);
+    });
+
+    let n = charArray.length;
+
+    // Criando a prioridade da fila (q)
+    // cria uma fila mínima de prioridades
+    let q = [];
+
+    for (let i = 0; i < n; i++) {
+
+        // criando um objeto no de Huffman e adicionando ele a fila (q)
+        let hn = new HuffmanNode();
+
+        // coloca os dados no nó
+        hn.c = charArray[i];
+        hn.data = charfreq[i];
+
+        // aponta para null
+        hn.left = null;
+        hn.right = null;
+
+        // coloca o no de huffmann na fila (q)    
+        q.push(hn);
+
+    }
+
+    // cria o no raiz e ordena a fila
+    let root = null;
+    q.sort(function(a,b){
+        return a.data-b.data;
+    });
+
+    // Extraimos os dois valores minimos da heap cada vez ate que seu tamanho se reduza a 1
+    // extraindo ate que todos os nos sejam extraidos
+    while (q.length > 1) {
+
+        // extracao do primeiro minimo
+        let x = q[0];
+        q.shift();
+
+        // extracao do segundo minimo
+        let y = q[0];
+        q.shift();
+
+        // cria nó f que é igual a soma da frequencia de dois nós
+        // atribuindo valores a nó f    
+        let f = new HuffmanNode();
+        f.data = x.data + y.data;
+        f.c = '-';
+
+        // primeiro nó extraído como filho a esquerda
+        f.left = x;
+
+        // segundo nó extraído como filho a direita
+        f.right = y;
+
+        // definindo f como o nó na raiz
+        root = f;
+
+        // adiciona o nó a fila de prioridades
+        q.push(f);
+        
+        // ordena a fila
+        q.sort(function(a,b){
+            return a.data-b.data;
+        });
+    }
+
+    // printa os códigos atravessando a árvore
+    printCode(root, "");
+        
+    
+        
+        
+}
+// end huffmann tree
+      
+
+
 function displayModal(title, text) {
     
-    var modal =  `
+    let modal =  `
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -44,7 +179,10 @@ function displayModal(title, text) {
     </div>`;
         
     $('body').append(modal);
-    $('#exampleModal').modal('show');    
+    $('#exampleModal').modal('show');
+    $('#exampleModal').on('hidden.bs.modal', function(event) {
+        $('#exampleModal').remove();
+    });   
 }
 
 function displayAlert(type, text) {
@@ -111,7 +249,6 @@ function saveTree() {
     
 }
 
-
 function loadExamples() {
 
     examplesNames.forEach(function (name, value) {
@@ -125,31 +262,74 @@ function loadExamples() {
     });
 }
 
+// realiza a travessia em profundidade
 function percursoDFT() {
     
-    console.log("[+] Percurso Depth-first iniciado!");
-    var stack = [];
-    var animX = 0;
-    stack.push(root);
+    if (root) {
+        
+        console.log("[+] Percurso Depth-first iniciado!");
+        var stack = [];
+        var animX = 0;
+        stack.push(root);
+        
+        while(stack.length != 0) {
+            var element = stack.pop();
+            visitElement(animX);
+            animX = animX + 1;
+            let displayDFT = document.getElementById("displayDFT");
+            displayDFT.innerHTML += element.value + ', ';
 
-    while(stack.length != 0) {
-        var element = stack.pop();
-        visitElement(animX);
-        animX=animX+1;
-        console.log(element);
+            if(element.children != undefined) {
 
-        if(element.children != undefined) {
+                for(var i=0; i<element.children.length; i++){
 
-            for(var i=0; i<element.children.length; i++){
-
-                stack.push(element.children[element.children.length-i-1]);
-                
+                    stack.push(element.children[element.children.length-i-1]);
+                    
+                }
             }
         }
+    } else {
+        displayModal("Árvore vazia!", "Não existem nós na árvore para fazer uma travessia. Para fazer a travessia, primeiro é necessário criar um diagrama de árvore.");
     }
+
 }
 
-// adicionar no raiz
+// realiza a travessia em largura
+function percursoBFT(){
+
+    if (root) {
+        
+        console.log("[+] Percurso Breadth-first iniciado!");
+        var queue=[];
+        var animX=0;
+        queue.push(root);
+        
+        while(queue.length != 0) {
+
+            var element = queue.shift();
+            visitElement(element,animX);
+            animX= animX+1;
+            let displayBFT = document.getElementById("displayBFT");
+            displayBFT.innerHTML += element.value + ', ';
+
+            if(element.children != undefined) {
+
+                for(var i=0; i<element.children.length; i++){
+
+                    queue.push(element.children[i]);
+
+                }
+
+            }
+
+        }
+    } else {
+        displayModal("Árvore vazia!", "Não existem nós na árvore para fazer uma travessia. Para fazer a travessia, primeiro é necessário criar um diagrama de árvore.");
+    }
+
+}
+
+// adicionar nó raiz
 function addRoot() {
     
     var inputRoot = document.getElementById("inputRoot").value;
@@ -157,19 +337,22 @@ function addRoot() {
         root = new Tree(inputRoot);
         root.x0 = 0;
         root.y0 = height / 2;        
-        update(root);
+        update(root);    
         document.getElementById('nodeAlert').hidden = true;
         document.getElementById('inputValue').disabled = false;
         document.getElementById('inputTreeName').disabled = false;
         console.log("[+] Nó raiz adicionado:" + inputRoot);
-        displayAlert("success", "Nó raiz adicionado: " + inputRoot);
+        displayAlert("success", "Nó raiz adicionado: " + inputRoot);        
     } else {
+
         console.log("[!] Insira um valor para o nó raiz!");
+        displayModal("Campo vazio!", "Insira um valor no campo de entrada para adicionar um nó raiz.");
+
     }
 
 }
 
-// adicionar no
+// adicionar nó
 function addValue() {
     
     if(selected) {
@@ -191,7 +374,7 @@ function addValue() {
 
     } else {
         console.log("[!] É preciso adicionar selecionar um nó!");
-        displayModal('Erro ao adicionar nó!', 'É preciso selecionar um nó pai com um click antes de adicionar novo nó!');
+        displayModal('Erro ao adicionar nó!', 'Se um nó raiz já foi adicionado, então selecione um nó qualquer com um click para adicionar um nó filho. Caso contrário adicione um nó raiz.');
     }
 }
 
@@ -236,11 +419,469 @@ function selectExample() {
     //displayAlert("success", "Árvore inicializada: " + examplesNames[selected.value]);
 }
 
+function onlyUnique(value, index, self) {
+
+    return self.indexOf(value) === index;
+
+}
+
+// retorna a quantidade de nos da arvore
+function getDistinctNodeValues() {
+
+    var stack = [];
+    var node_values = [];
+    stack.push(root);
+    
+    while(stack.length != 0) {
+        
+        var element = stack.pop();
+        
+        if(element.children != undefined) {
+
+            node_values.push(element.value);
+
+            for(var i=0; i < element.children.length; i++){
+                
+                stack.push(element.children[element.children.length-i-1]);
+                
+            }
+
+        } else {
+
+            node_values.push(element.value);
+
+        }
+        
+    }
+
+    unique_values = node_values.filter(onlyUnique);
+    return unique_values;
+}
+
+function getTreeNodesInformationBFT() {
+
+    var queue = [];
+    var count_nodes = 1;
+    var count_leaves = 0;
+    var tree_height = 0;
+    queue.push(root);
+    
+    while(queue.length != 0) {
+        
+        var element = queue.shift();
+        //console.log(element);
+        if(element.children != undefined) {
+
+            for(var i=0; i < element.children.length; i++){
+                
+                if(element.children[i].depth > tree_height) {
+
+                    tree_height = element.children[i].depth;
+
+                }
+
+                queue.push(element.children[i]);
+                count_nodes++;
+                
+            }            
+
+        } else {
+
+            count_leaves++
+
+        }
+        
+    }
+
+    tree_info = {
+        count_leaves: count_leaves,
+        tree_height: tree_height,
+        count_nodes: count_nodes
+    };
+
+    var displayTreeInfo = document.getElementById("treePropInfo");
+   
+    displayTreeInfo.innerHTML = '<tr><td>Número de Folhas: </td><td>'+tree_info.count_leaves+'</td></tr>';
+    displayTreeInfo.innerHTML += '<tr><td>Altura da Árvore: </td><td>'+tree_info.tree_height+'</td></tr>';
+    displayTreeInfo.innerHTML += '<tr><td>Total de Nós: </td><td>'+tree_info.count_nodes+'</td></tr>';
+    return tree_info;
+}
+
+// retorna a quantidade de nos da arvore
+function getTreeNodesInformation() {
+
+    var stack = [];
+    var count_nodes = 1;
+    var count_leaves = 0;
+    var tree_height = 0;
+    stack.push(root);
+    
+    while(stack.length != 0) {
+        
+        var element = stack.pop();
+        
+        if(element.children != undefined) {
+
+            for(var i=0; i < element.children.length; i++){
+
+                stack.push(element.children[element.children.length-i-1]);
+                count_nodes++;
+                
+            }
+
+            tree_height++;
+
+        } else {
+
+            count_leaves++
+
+        }
+        
+    }
+
+    tree_info = {
+        count_leaves: count_leaves,
+        tree_height: tree_height,
+        count_nodes: count_nodes
+    };
+
+    var displayTreeInfo = document.getElementById("treePropInfo");
+   
+    displayTreeInfo.innerHTML = '<tr><td>Número de Folhas: </td><td>'+tree_info.count_leaves+'</td></tr>';
+    displayTreeInfo.innerHTML += '<tr><td>Altura da Árvore: </td><td>'+tree_info.tree_height+'</td></tr>';
+    displayTreeInfo.innerHTML += '<tr><td>Total de Nós: </td><td>'+tree_info.count_nodes+'</td></tr>';
+    return tree_info;
+}
+
+function getNodeInformation(node) {
+    
+    var isLeave;
+    var descendants;
+
+    if(node.children != undefined) {
+
+        descendants = node.children.length;
+        isLeave = 'Não';
+
+    } else {
+
+        isLeave = 'Sim';
+        descendants = 0;
+
+    }
+
+    node_info = {
+        descendantsNumber: descendants,
+        isLeave: isLeave,
+        value: node.value,
+        depth: node.depth
+    };
+    
+    var displayNodeInfo = document.getElementById("treePropInfo2");
+    
+    displayNodeInfo.innerHTML = '<tr><td>Nó selecionado: </td><td>'+node_info.value+'</td></tr>';
+    displayNodeInfo.innerHTML += '<tr><td>É folha: </td><td>'+node_info.isLeave+'</td></tr>';
+    displayNodeInfo.innerHTML += '<tr><td>Núm. Descendentes: </td><td>'+node_info.descendantsNumber+'</td></tr>';
+    displayNodeInfo.innerHTML += '<tr><td>Altura do nó: </td><td>'+node_info.depth+'</td></tr>';
+    
+    return node_info;
+}
+
 function resetTree() {
     window.location.href = window.location.href;
     console.log("[-] Reset");
 }
-  
+
+/*
+function treeToAdjacencyList() {
+    
+    var queue=[];    
+    queue.push(root);
+    
+    while(queue.length != 0) {
+
+        var element = queue.shift();                
+
+        if(element.children != undefined) {
+
+            for(var i=0; i<element.children.length; i++){
+
+                queue.push(element.children[i]);
+
+            }
+
+        }
+
+    }
+
+    return queue;
+}
+
+
+// matriz de adjacências diretamente do diagrama da árvore
+function createAdjacencyMatrixAuto() {
+
+    // retorna o conteudo dos nós sem duplicidade
+    unique_chars = getDistinctNodeValues();
+
+    // tamanho do array valores
+    dim = node_values.length
+    
+    // usa a o tamanho do array para criar uma matriz de zeros de tam. (dim x dim)
+    let m = Array(dim).fill().map(() => Array(dim).fill(0));
+
+    // percorre os nós da árvore e montade adjacências automaticamente.
+
+    for(var parent in adjList) {
+        
+        for(var i=0; i < adjList[parent].length; i++) {
+            
+            if(adjList[parent].length > 0) {
+
+                // pega o símbolo da lista de adj. e retorna o indice na lista de caracteres únicos
+                // para as linha e coluna
+                row = unique_chars.indexOf(parent);
+                col = unique_chars.indexOf(adjList[parent][i]);                    
+                m[row][col] += 1;
+
+            }
+            
+        }
+            
+    }
+
+    var table = '<table class="matrix">';
+
+    for(x in m) {
+
+        table += '<tr>';
+        
+        for (y in m[x]) {
+
+            table += '<td>' + m[x][y] + '</td>';
+
+        }
+
+        table += '</tr>';
+    }
+
+    table += '</table>';
+
+    var displayMatrixAdj = document.getElementById("displayMatrixAdj");
+    displayMatrixAdj.innerHTML += table;
+} */
+
+function createAdjacencyMatrixFromInput() {
+
+    // receber um input no formato de objeto/hashmap
+    
+    var inputAdjList = document.getElementById("inputAdjList").value;
+    
+    if (inputAdjList.length > 0) {
+        
+        //var adjList = {"+": ["+", "-"], "-": []};
+        var adjList = JSON.parse(inputAdjList);
+        
+        unique_chars = [];
+        
+        // forma uma lista de caracteres únicos a partir da lista de adjacências
+        for(var key in adjList) {
+
+            unique_chars.push(key);	
+
+        }
+
+        // conta quantos símbolos diferentes existem
+        var dim = Object.keys(adjList).length;
+        
+        // cria a matriz quadrada de zeros com dimensão
+        var m = Array(dim).fill().map(() => Array(dim).fill(0));
+
+        // dado o simbolo atual, verificar o indice correspondente na lista de diferentes símbolos
+        // Usamos esse índice para encontrar a posição correspondente do símbolo na matriz de zeros(M)
+
+        for(var parent in adjList) {
+            
+            for(var i=0; i < adjList[parent].length; i++) {
+                
+                if(adjList[parent].length > 0) {
+
+                    // pega o símbolo da lista de adj. e retorna o indice na lista de caracteres únicos
+                    // para as linha e coluna
+                    row = unique_chars.indexOf(parent);
+                    col = unique_chars.indexOf(adjList[parent][i]);                    
+                    m[row][col] += 1;
+
+                }
+                
+            }
+                
+        }
+
+        var table = '<table class="matrix">';
+
+        for(x in m) {
+
+            table += '<tr>';
+            
+            for (y in m[x]) {
+
+                table += '<td>' + m[x][y] + '</td>';
+
+            }
+
+            table += '</tr>';
+        }
+
+        table += '</table>';
+
+        var displayMatrixAdj = document.getElementById("displayMatrixAdj");
+        displayMatrixAdj.innerHTML += table;
+    } else {
+        displayModal('Campo vazio!', "Insira uma lista de adjacências no formato objeto em JavaScript. Ex1: {'+': ['+', '-'], '-': []}<br><br>onde,<br><br> {'pai1': ['filho1', 'filho2'], 'pai2': ['filho3', 'filho4']}.<br> Se não houverem filhos, é necessário colocar um array vazio como:<br><br> Ex2: {'pai5': []}");
+    }
+    
+    
+}
+
+// travessia em preordem
+
+function preOrder(node) {
+
+    // exibe o valor do nó
+    let displayTraverseTypes = document.getElementById("displayPreorder");
+    displayTraverseTypes.innerHTML += node.value + ', ';
+    console.log(node.value);
+
+    // se existem filhos...
+    if (node.children) {
+        
+        // por recursão, vá para subarvore esquerda    
+        preOrder(node.children[0]);
+    
+        // e então vá para subarvore direita
+        preOrder(node.children[1]);
+        
+    }
+    
+}
+
+// travessia em posordem
+
+function postOrder(node) {
+
+    
+    // se existem filhos...
+    if (node.children) {
+        
+        // primeiro, por recursão, vá para subarvore esquerda    
+        postOrder(node.children[0]);
+        
+        // por recursão, vá para subarvore direita
+        postOrder(node.children[1]);
+        
+    }
+    
+    // exibe o valor do nó
+    let displayTraverseTypes = document.getElementById("displayPostorder");
+    displayTraverseTypes.innerHTML += node.value + ', ';
+    console.log(node.value);
+
+}
+
+// travessia em inordem
+
+function inOrder(node) {
+
+    // se existem filhos...
+    if (node.children) {
+
+        // primeiro, por recursão, vá para subarvore esquerda    
+        inOrder(node.children[0]);
+
+    }    
+        // exibe o valor do nó
+        let displayTraverseTypes = document.getElementById("displayInorder");
+        displayTraverseTypes.innerHTML += node.value + ', ';
+        console.log(node.value);
+
+    if (node.children) {
+
+        // por recursão, vá para subarvore direita
+        inOrder(node.children[1]);
+
+    }
+
+}
+
+// exibe a travessia em preordem
+function traversePreOrder() {
+
+    if (root) {
+        
+        preOrder(root);    
+        
+    } else {
+
+        displayModal("Árvore vazia!", "Não existem nós na árvore para fazer uma travessia. Para fazer a travessia, primeiro é necessário criar um diagrama de árvore.");
+
+    }
+
+}
+
+// exibe a travessia em posordem
+function traversePostOrder() {
+
+    if (root) {
+        
+        postOrder(root);
+
+    } else {
+
+        displayModal("Árvore vazia!", "Não existem nós na árvore para fazer uma travessia. Para fazer a travessia, primeiro é necessário criar um diagrama de árvore.");
+
+    }
+    
+
+}
+
+// exibe a travessia em inordem
+function traverseInorder() {
+
+    if (root) {
+        
+        inOrder(root);
+
+    } else {
+
+        displayModal("Árvore vazia!", "Não existem nós na árvore para fazer uma travessia. Para fazer a travessia, primeiro é necessário criar um diagrama de árvore.");
+
+    }
+    
+    
+}
+
+function clearTraverseDisplay() {
+    document.getElementById('displayPreorder').innerHTML = "";
+    document.getElementById('displayPostorder').innerHTML = "";
+    document.getElementById('displayInorder').innerHTML = "";
+}
+
+function clearHuffmanTable() {    
+    document.getElementById('tableHuffmanCodes').innerHTML = "";
+    document.getElementById('tableHuffmanCodes').innerHTML = "<table id='tableHuffmanCodes' class='codesTable'><thead><td>Caractere</td><td>Código</td></thead></table>";
+}
+
+function clearTraversal() {
+    document.getElementById('displayDFT').innerHTML = "";
+    document.getElementById('displayBFT').innerHTML = "";
+}
+ 
+function clearAdjacencyMatrix() {
+    document.getElementById('displayMatrixAdj').innerHTML = "";
+    document.getElementById('displayMatrixAdj').innerHTML = '<div id="displayMatrixAdj" align=center></div>';
+}
+
 // funcao para atualizar a arvore
 function update(source) {
     
@@ -276,7 +917,7 @@ function update(source) {
         .on("click", function () {
             d3.select(this).style("fill", "red");
         });
-    
+                
     //d3.select(this).select("rect").style("fill", "blue").on("click", click);
     
     nodeEnter.append("text")
@@ -370,14 +1011,19 @@ function update(source) {
         d.x0 = d.x;
         d.y0 = d.y;
     });
+
+    // exibe informações sobre a árvore
+    getTreeNodesInformationBFT();
+    
+
 }
 
 // retorna o no selecionado
 function click(d) {
     selected = d;
     document.getElementById('btn-add').disabled = false;
-    document.getElementById('btn-del').disabled = false;
-    console.log(selected);
+    document.getElementById('btn-del').disabled = false;    
+    getNodeInformation(d); // exibe informações do nó selecionado
     console.log("Nó selecionado:" + d.value);
     update(d); 
 }
@@ -443,12 +1089,13 @@ zm.translate([350, 20]);
 
 if(root) {
 
-    //update(root);    
+    //update(root);
 
 } else {
     document.getElementById('nodeAlert').hidden = false;
     document.getElementById('inputValue').disabled = true;
     document.getElementById('inputTreeName').disabled = true;
+    createAdjacencyMatrixFromInput();
 }
 
 d3.select("#body").style("height", "800px");

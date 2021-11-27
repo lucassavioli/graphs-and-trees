@@ -26,40 +26,101 @@
             </div>
             <div class="col"></div>
         </div>
-        <div class="row">
-            <div class="col-md-3">
+        <div class="row" id="section1">
+            <div class="col-md-4">
                 <h3 class="text-center">Operações</h3>
                 <div class="input-group mx-auto">
                     <input type="text" id="inputValue" class="form-control" placeholder="Adicionar nó" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" onclick="addValue()" id="btn-add"><i class="bi bi-plus"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="addValue()" id="btn-add"><i style="color:green" class="bi bi-plus"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="removeValue()" id="btn-del"><i style="color:red" class="bi bi-dash"></i></button>
                 </div>
                 <div class="input-group mx-auto">
                     <input type="text" id="inputRoot" class="form-control" placeholder="Adicionar nó raiz" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" onclick="addRoot()" id="btn-add"><i class="bi bi-plus"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="addRoot()" id="btn-add"><i style="color:green" class="bi bi-plus"></i></button>
                 </div>                
             </div>
-            <div class="col-md-3">
-                <h3 class="text-center">Remover Nó</h3>
-                <div class="input-group mx-auto">                        
-                    <button class="btn btn-outline-secondary" type="button" onclick="removeValue()" id="btn-del">Remover</button>
-                    <button class="btn btn-outline-secondary" type="button" onclick="resetTree()" id="btn-reset">Reset</button>
-                    <button class="btn btn-outline-secondary" type="button" onclick="percursoDFT()" id="btn-reset">Percorrer</button>
+            <div class="col-md-2">
+                <h3 class="text-center">Travessias DFT e BFT</h3>
+                <div class="input-group mx-auto">                                            
+                    <!--<button class="btn btn-outline-secondary" type="button" onclick="resetTree()" id="btn-reset">Reset</button> -->
+                    <button class="btn btn-outline-secondary" type="button" onclick="percursoDFT()" id="btn-reset">DFT</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="percursoBFT()" id="btn-reset">BFT</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="clearTraversal()" id="btn-reset" style="color:blue">Limpar</button>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <h3 class="text-center">Exemplos</h3>
-                <div class="text-center">
-                    <select id="select-example" onchange="selectExample()" class="custom-select">
-                        <option selected disabled>Escolha um exemplo...</option>                        
-                    </select>
+                <div id="displayTraverse">
+                    <p>DFT</p>
+                    <div id="displayDFT"></div>
+                    <p>BFT</p>
+                    <div id="displayBFT"></div>
                 </div>
-            </div>
-            <div class="col-md-3">
+            </div>            
+            <div class="col-md-2">
                 <h3 class="text-center">Salvar Árvore</h3>
-                <div class="input-group mx-auto">
-                    <input type="text" id="inputTreeName" class="form-control" placeholder="Insira um nome" aria-describedby="button-addon2">
-                    <button class="btn btn-outline-secondary" type="button" onclick="saveTree()" id="btn-save"><i class="bi bi-save2"></i></button>                              
+                <select id="select-example" onchange="selectExample()" class="form-select">
+                    <option selected disabled>Selecione um exemplo...</option>                                            
+                </select>
+                <div class="input-group mb-2">                                            
+                    <input type="text" id="inputTreeName" class="form-control" placeholder="Insira um nome para salvar a árvore" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" onclick="saveTree()" id="btn-save"><i class="bi bi-save2"></i></button>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h3 class="text-center">Propriedades da Árvore</h3>
+                <div class="input-group mx-auto" id="treeInfo">
+                    <table id="treePropInfo"></table>
                 </div>                
+            </div>
+            <div class="col-md-2">
+                <h3 class="text-center">Nó Selecionado</h3>
+                <div class="input-group mx-auto" id="treeInfo2">
+                    <table id="treePropInfo2"></table>                    
+                </div>                
+            </div>
+        </div>
+        <div class="row" id="section2">
+            <div class="col-md-4">
+                <h3 class="text-center">Gerar Matriz de Adjacências</h3>
+                <p>Usar entrada: {"+": ["*", "/"], "*": ["5","4"], "/": ["4","1"], "5": [], "4": [], "3": [], "1": []}</p>
+                <label for="inputAdjList" class="form-label">Lista de Adjacências:</label>
+                <input type="text" id="inputAdjList" class="form-control" placeholder="Insira uma lista de adjacências" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" onclick="createAdjacencyMatrixFromInput()" id="btn-generate-adj">Gerar Matriz</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="clearAdjacencyMatrix()" id="btn-generate-adj" style="color:blue">Limpar</button>
+                <div id="displayMatrixAdj" align=center></div>
+            </div>
+            <div class="col-md-4">
+                <h3 class="text-center">Gerar Árvore Huffmann</h3>
+                <p>Entrada de caracteres: a,b,c,d,e,f</p>
+                <p>Qtd. Caracteres: 5,9,12,13,16,45</p>
+                <input type="text" id="inputCharList" class="form-control" placeholder="Insira uma lista caracteres" aria-describedby="button-addon2">
+                <input type="text" id="inputFreqList" class="form-control" placeholder="Insira a quantidade de cada caractere" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="button" onclick="huffmanTree()" id="btn-generate-htree">Gerar Árvore</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="clearHuffmanTable()" id="btn-generate-htree" style="color:blue">Limpar</button>
+                
+                <div id="displayHuffmanCodes" align=center>
+                    <table id="tableHuffmanCodes" class="codesTable">
+                        <thead><td>Caractere</td><td>Código</td></thead>
+                    </table>                    
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h3 class="text-center">Tipos de DFT</h3>
+                <div class="input-group mx-auto">                        
+                    <button class="btn btn-outline-secondary" type="button" onclick="traversePreOrder()" id="btn-preordem">Preordem</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="traversePostOrder()" id="btn-posordem">Posordem</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="traverseInorder()" id="btn-inordem">Inordem</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="clearTraverseDisplay()" id="btn-inordem" style="color:blue">Limpar</button>                    
+                </div>
+                <div id="displayTraverseTypes" align=center>
+                    <p>Preordem: </p>
+                    <div id="displayPreorder">
+                    </div>
+                    <p>Postordem: </p>
+                    <div id="displayPostorder">
+                    </div>
+                    <p>Inordem: </p>
+                    <div id="displayInorder">
+                    </div>
+                </div>
             </div>
         </div>
                 

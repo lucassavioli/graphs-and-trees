@@ -124,27 +124,27 @@ var examples =
     ]
  },
  {
-    "value":"-",
+    "value":"+",
     "children":[
-       {
-          "value":"+",
-          "children":[
-             {
-                "value":"2"
-             },
-             {
-                "value":"x"
-             }
-          ]
-       },
        {
           "value":"*",
           "children":[
              {
-                "value":"y"
+                "value":"5"
              },
              {
+                "value":"4"
+             }
+          ]
+       },
+       {
+          "value":"/",
+          "children":[
+             {
                 "value":"3"
+             },
+             {
+                "value":"1"
              }
           ]
        }
